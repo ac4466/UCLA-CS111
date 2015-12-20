@@ -1,0 +1,78 @@
+# Fill in your name, student ID, and email address in this file.
+# If you are working in a team, fill out the information for both team 
+# members.
+
+# SUBMIT THE LAB ONLY ONCE (from only one partner). This file will be
+# automatically parsed in order to give both team members credit for the
+# lab.
+
+# You need to fill in the EXERCISE sections describing your solutions
+# for Tasks 1, 2, and 3, as well as write the corresponding code.
+# If you did one or more extra credit problems, indicate which one in the
+# appropriate section below (remove the # sign first). If you have any other
+# information you'd like us to know, please add it at the end of the file.
+
+# Partner 1
+Name: Aaron Cheng
+Student ID: 003933507
+Email: ac4466@g.ucla.edu
+
+# Partner 2 (if you're working in a team)
+Name: 
+Student ID: 
+Email: 
+
+# EXERCISE 1: What method you used to make your peer download and upload
+#    files in parallel?  (~1-3 sentences)
+To implement downloading and uploading in parallel, I used fork() in main() to
+create child processes that ran concurrently. Each child process downloads or
+uploads a single file from/to a peer. The parent process simply creates and
+reaps the child processes without doing any downloading/uploading.
+
+# EXERCISE 2A: What conditions did you find and fix that would have
+#    triggered a buffer overrun bug?  (~1-3 sentences each)
+There were a couple instances of strcpy that I found in the skeleton code.
+strcpy causes the peer to be very susceptible to buffer overruns, so I changed
+all instances of strcpy to strncpy, which allowed me specify the max number of
+characters to copy and to always null-terminate the strings. The strcpy's were
+found in start_download() and task_download().
+
+# EXERCISE 2B: What other robustness problems did you fix?  (~1-3 sentences
+#    each)
+~ I prevented the peer from uploading any files that were not in the current
+	directory. I did this by looking at the filename of the file that was
+	requested. If it contained a '/' character, it is an indication that
+	the file is not in the current directory, and those requests were
+	ignored.
+~ I increased the task buffer size (TASKBUFSIZ) so that my peer could
+	continue to run its tasks when more peers are connected.
+~ To prevent another peer from uploading an infinitely long file to my peer and
+	filling up my disk space, I defined a max download size (MAXDOWNLOADSIZ).
+	I modified task_download() such that if a file the other peer tried to
+	upload to my peer exceeded that size, my peer would not download the file.
+
+# EXERCISE 3: Describe the attacks you implemented for "evil mode".  Why
+#    are they attacks?  (~3-10 sentences each)
+I implemented attacks for "evil mode." Two are done while downloading and one is
+done while uploading.
+~ Connection attack during downloading: My peer will attempt to repeatedly connect
+	to the uploading peer until it can no longer do so. It will then search
+	and move on to the next peer and then do the same. This is essentially
+	a simple denial of service attack. Because the uploading peer will have so
+	many connections open, it will not be able to upload to anymore peers other
+	than the ones that were connected to it before my attack.
+~ Buffer overflow attack during downloading: My peer will attempt to overflow
+	the uploading peer's buffer by repeatedly writing the file name to the buffer
+	until we can no longer do so. This is essentially the attack that I protected
+	my own peer from. By overflowing the peer's buffer, it could possibly crash
+	it through a segmentation fault.
+~ Junk attack during uploading: My peer will attempt to fill up the downloading
+	peer's disk space. This is done by repeatedly writing junk to the client
+	instead of the actual file contents. This attack I also protected my own
+	peer from when I introduced a max download size. However, if the other
+	peer is not protected from this, my peer could fill up its disk space.
+
+# Extra credit problems
+#Extra credit problem: none
+
+# Add any other information you'd like us to know below this line.

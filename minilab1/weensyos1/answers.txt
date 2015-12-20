@@ -1,0 +1,29 @@
+Name: Aaron Cheng
+UCLA ID: 003933507
+
+Collaborators:
+
+-------------------------------------------------------------------------------
+
+Response to Exercise 1:
+When the process that called sys_getpid() eventually runs again, whether or not
+other processes were run before, the call to sys_getpid() will still return the
+correct value. This is because the pid is saved into the calling process's
+p_registers.reg_eax. Other processes (assuming that they are well behaved) will
+not affect this process's saved register states.
+
+
+Anything else you'd like us to know:
+
+Response to Exercise 3:
+To implement blocking for INT_SYS_WAIT, I added a new field to the process
+descriptor structure: pid_t p_wait_for_pid. This new field indicates which
+process the current process is waiting on, if any. If it is not waiting for any
+process, it should be -1; In INT_SYS_WAIT, if the calling process tries to wait
+for another process, it sets the calling process's p_state to P_BLOCKED and its
+p_wait_for_id to the pid of whichever process it is waiting on. I then changed
+the implementation of INT_SYS_EXIT so that when a process exits, it searches
+the array of processes for a process that was waiting on it. It then sets that
+process's p_state to P_RUNNABLE and puts the exit status in its eax register.
+
+Extra credit exercises:

@@ -1,0 +1,26 @@
+#! /bin/bash -v
+# This file runs a series of tests for ospfsfixer.
+
+# No arguments
+./fsfixer
+
+# Invalid file
+./fsfixer asdfjkl
+
+# Non-image file
+./fsfixer fsfixer.c
+
+# Valid image
+./fsfixer valid_fs.img
+
+# Incorrect ninodes
+./fsfixer badninodes_fs.img
+
+# Incorrect nblocks
+./fsfixer badnblocks_fs.img
+
+# Incorrect magic number
+./fsfixer badmagicno_fs.img
+
+# Incorrect first inob
+./fsfixer badfirstinob_fs.img

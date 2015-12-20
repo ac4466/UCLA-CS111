@@ -1,0 +1,84 @@
+Name: Aaron Cheng
+UCLA ID: 003933507
+
+Collaborators:
+
+-------------------------------------------------------------------------------
+
+Response to Exercise 1:
+
+The name of the scheduling algorithm is: round robin
+
+
+(Exercise 2 is a coding exercise)
+Please refer to code. Code that was added is commented with "Exercise 2"
+
+Response to Exercise 3:
+
+Average turnaround time for scheduling_algorithm 0: 1.5 + (4(320) + 4(320) + 4(320) + 4(320))/4 = 1281.5 ms
+Average turnaround time for scheduling_algorithm 1: 480 + (320 + 320 + 320 + 320)/4 = 800 ms
+
+Average wait time for scheduling_algorithm 0: (0 + 1 + 2 + 3)/4 = 1.5 ms
+Average wait time for scheduling_algorithm 1: (0 + 320 + 640 + 960)/4 = 480 ms
+
+
+
+Exercise 4:
+
+Did you complete Exercise 4A, Exercise 4B, or both for extra credit?
+I completed both. Please refer to code. Code that was added is commented with
+"Exercise 4A" and "Exercise 4B" 
+
+Exercise 5:
+The first known timer interrupt occurs during process 4. Looking at the output, we see that the first time
+that the chain of "12341234..." breaks with output saying "12341231...". This means that during the execution
+of process 4, skipping that output of "4".
+
+(Exercise 6 is a coding exercise)
+Please refer to code. Code that was added is commented with "Exercise 6". Essentially, I used the atomic_swap function
+to implement my lock.
+
+Anything else you'd like us to know:
+
+
+
+Extra credit exercises:
+Exercise 7:
+Please refer to code. Code that was added is commented with "Exercise 7". It is also provided below. I implemented the
+lottery scheduling as my scheduling_algorithm 4. I used an int array to hold the number of tickets that each process
+held. In order to generate a random number, I used the Park-Miller Lehmer random number generator found at
+http://en.wikipedia.org/wiki/Park%E2%80%93Miller_random_number_generator.
+
+static const int totalTickets = 100;
+static int tickets[NPROCS];
+uint32_t generator;
+uint32_t lcg_parkmiller(uint32_t a)
+{
+    return (a * 48271UL) % 2147483647UL;
+}
+
+asm volatile("rdtsc" : "=A" (generator)); // Seed generator variable
+tickets[1] = 33; // Process 1 holds 33 tickets
+tickets[2] = 50; // Process 2 holds 17 tickets
+tickets[3] = 90; // Process 3 holds 40 tickets
+tickets[4] = 100; // Process 4 holds 10 tickets
+
+else if (scheduling_algorithm == 4)
+{
+	while (1)
+	{
+		generator = lcg_rand(generator);
+		int selectedTicket = generator % totalTickets;
+			int i;	
+		for(i = 1; i < NPROCS; i++)
+		{
+			if (selectedTicket < tickets[i])
+			{
+				if(proc_array[i].p_state == P_RUNNABLE)
+					run(&proc_array[i]);
+				else
+					break;
+			}
+		}
+	}
+}
